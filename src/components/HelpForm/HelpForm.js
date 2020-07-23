@@ -8,19 +8,29 @@ class HelpForm extends React.Component {
         this.name = React.createRef();
         this.grading = React.createRef();
         this.question = React.createRef();
+        this.description = React.createRef();
 
     }
 
     handleSubmit(event){
         event.preventDefault();
+        var questionType;
+        if (this.grading.current.checked) {
+            questionType = "Grading";
+        }
+        else {
+            questionType = "Question"
+        }
         var formData = {
             name: this.name.current.value,
-            needsGrading: this.grading.current.checked,
-            hasQuestion: this.question.current.checked
+            type: questionType,
+            description: this.description.current.value
+
         }
         
-        var xhr = new XMLHttpRequest()
-        xhr.open('POST', '/SubmitHelpRequest');
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/api/requests');
+        xhr.setRequestHeader("Content-type", "application/json");
         xhr.send(JSON.stringify(formData));
         
     }
@@ -36,6 +46,11 @@ class HelpForm extends React.Component {
                     <Form.Label>Type of Help</Form.Label>
                     <Form.Check type="radio" name="helpType" value="Grading" ref={this.grading} label="Grading"/>
                     <Form.Check type="radio" name="helpType" value="Question" ref={this.question} label="Question"/>
+                </Form.Group>
+                <Form.Group controlId="description">
+                    <Form.Label>Brief Question Description</Form.Label>
+                    <Form.Control as="textarea" rows="2"/>
+                    <Form.Text className="text-muted" ref={this.description}>You can leave this blank if you don't have a question.</Form.Text>
                 </Form.Group>
                 <Button type="submit">Ask For Help</Button>
             </Form>
